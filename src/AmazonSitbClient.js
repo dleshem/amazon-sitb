@@ -18,7 +18,7 @@ export class AmazonSitbClient {
 		})
 	}
 	
-	goToLitbPage({asin, pageNumber}) {
+	goToLitbPage({asin, page}) {
 		return this._fetchJson({
 			params: {
 				method: 'goToLitbPage',

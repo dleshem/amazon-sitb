@@ -44,4 +44,32 @@ export class AmazonSitbDriver {
 			}
 		}
 	}
+	
+	goToLitbPage({asin, page}) {
+		return {
+			returns: ({bookPages, delay = 0}) => {
+				this._server.addRule({
+					resource: '/',
+					params: {
+						method: 'goToLitbPage',
+						asin,
+						page
+					},
+					delay: delay,
+					responseText: JSON.stringify(bookPages)
+				})
+			},
+			errors: () => {
+				this._server.addRule({
+					resource: '/',
+					params: {
+						method: 'goToLitbPage',
+						asin,
+						page
+					},
+					responseText: '<html><head><title>Error 500</title></head></html>'
+				})
+			}
+		}
+	}
 }

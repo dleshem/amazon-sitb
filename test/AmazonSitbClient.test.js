@@ -113,12 +113,119 @@ describe('AmazonSitbClient', () => {
 				asin: someAsin
 			}).errors()
 			
-			
 			return sitbClient.getBookData({
 				asin: someAsin
 			}).then((bookData) => {
 				// Unexpected success
 				assert.ok(false, `Expected protocol error, but request returned ${JSON.stringify(bookData)}`)
+			}, (error) => {
+				expect(error.code).to.equal('protocol')
+				expect(error.description).to.not.be.empty
+			})
+		})
+	})
+	
+	describe('goToLitbPage', () => {
+		const someAsin = '0818407271'
+		const somePage = '1'
+		const someBookPages = {"jumboImageUrls":{"25":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00P.JUMBOXXX.jpg?Expires=1449347936&Signature=Cb9u7jukBsvXsLRK7iRfQDEsh5qy/nkGMpZWGOIc8K1qLFyon84xD3to2NC8DbIMlvttOEplTklCwZG5dvQze0edmZux1dWqE2iRyZmLoei4xktZitXiQ98H/RLwMZEPQFCFgpvKmrGo2dz2Et1aYfLfnw7WzWpKsQ9vCSBgk+I=&Key-Pair-Id=APKAIUO27P366FGALUMQ","21":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00L.JUMBOXXX.jpg?Expires=1449347936&Signature=e7DrEN6mpbOZVqukdPYPOT5Xpc99g1CYm7+rSmstb4K+bz+w9o4WooYvyx19efrDvINXO/JQ1x+pn+fqG+qdzmFZkD8t/UpT7C13dpyhaJGIX/EeYZ1HIb5H1Bm+LQ5Slpn73qYj9zrIKwB632uo/bsWFhmUUlyQfwlMYSvOeSo=&Key-Pair-Id=APKAIUO27P366FGALUMQ","9":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S009.JUMBOXXX.jpg?Expires=1449347936&Signature=S2aTChLoLq41CLw38R5h4cBbNMV2+VXrqVJvfPtPAsqhpxtXMJi4SCBuBAKsdktsB+nA8PjgYb0wZYQUrvC8zO5IBG4s1lgHYbtJU7b3jPzSqdhzQbcriDHvOvw58wvDOpR5SrrZlxQyZmmFIWvPkfxibB8Xrbi2KtIPXWDeKXw=&Key-Pair-Id=APKAIUO27P366FGALUMQ","20":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00K.JUMBOXXX.jpg?Expires=1449347936&Signature=ML7r5uYZy61t9J14KitN2+tyzoOM1a0cHDWxVv6c1XCckr/iVwfXz7A7XBHpQSfONMVimY7cOGcWBCOByeOKb0CFsISOxkKdk9Wy0AAfZJEIXNZ0u0FGrVl0P0oRCBARjdVcNi6rkMwjgAVTa0+NmOVJcke5B4r+SH3hAtpqLD4=&Key-Pair-Id=APKAIUO27P366FGALUMQ","8":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S008.JUMBOXXX.jpg?Expires=1449347936&Signature=Xatp2hOCu3YUD8kmI2lyT9zsXVEPu0H/OSvMcW7EauDiJhFjTFWs7EuTuiRfgCuoqvIThSMPwA3ritLRtRBo/6/33yfyLsg0JEAs+cqdSPSBkEFxsVpQy0ZXHlu4iEn0E8zdqgRirmpJWLG13xNhovqFVdO/KtG2+9vMuYcSVBU=&Key-Pair-Id=APKAIUO27P366FGALUMQ","22":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00M.JUMBOXXX.jpg?Expires=1449347936&Signature=b3uojYRF/f60sY8xyy7p0TvpaR4G/a5kxZuX+qNO6qp8Rq8iGUZYkdjKvnh1gcsam9UFRKVET6RdPfd15qPwhGdhUqMmGhHxpsrfs/rFKOPSRHadDGnXZBWAYHlClOzUFQ3kL0fVBw7K/WwEIrqigKCSS+FoJiT8qCEgFJv2Dww=&Key-Pair-Id=APKAIUO27P366FGALUMQ","1":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S001.JUMBOXXX.jpg?Expires=1449347936&Signature=O9FsR4XF7EM7w13jwb4w/5z/ii9Hd5ED5S+DCs4KkXsdsc/wMEZNK6JdXisixzTAN/gMpA4PdJqK5n6SmQPh3Y1VhSmfY3fPdeaRRDwCV5Bh5PBH3+gIp78445Zf8sj43oZyp2HNEby+VrJf8o+WtBO7+oTBg0gRffAGwCAPe+Q=&Key-Pair-Id=APKAIUO27P366FGALUMQ","24":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00O.JUMBOXXX.jpg?Expires=1449347936&Signature=Ehl5pwNJDcNAV9ftg5qedv3uRgC5AdZZoiQ6o2RGDd+GYjwcJaci20tLVnW2DwsJX32EvAtAhTAlbVCgRfiTSavU3OPZKdI3cwuWHi+LTzPh5pAGWWcdDhAVGsKFpBbFG/V2Xz4YCuqtEH36TtQTw9tthMx9fdu28GTAUvwiKho=&Key-Pair-Id=APKAIUO27P366FGALUMQ","23":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00N.JUMBOXXX.jpg?Expires=1449347936&Signature=A1FG/I6UXh9tMtmL0+VdbI7FxFQjT+nFyVDWC4Xt5GhiKP3lWV/OwgSGeEMNRjNGOH5QM/nABVcEcdIAMvjR5m9b8Iro6/azqluOd58iTL+KpHiGeZq/DKqPzbvUq6gWOLrsO5RUyYfbyoW81OSGkq2A9YBv0Wx+9RNPbVUQHEM=&Key-Pair-Id=APKAIUO27P366FGALUMQ","5":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S005.JUMBOXXX.jpg?Expires=1449347936&Signature=AKoM9+0ZptOM5yjevpYJPQO+dhpSklpd9IhpU5Ms8SRWH3XzK+XtVPZqPdmAzOf+GYCwcXVtP+id8RYOLAqMnr/rtBJg8RLAaQVvVEdCOtyS/rznWLaB+JD73+dQN2CK1Vu6StDD/rbocwjs9PVGVXdnb51ZMPcVXf9q/vp2Ftw=&Key-Pair-Id=APKAIUO27P366FGALUMQ"},"largeImageUrls":{"25":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00P.LXXXXXXX.jpg?Expires=1449347936&Signature=M+4tRVNiRJTNZyIqL8Ht1HuFrh0PEG5I1Bf7YszoumoNgIMPiCVamRRPLdpVDDOgP0Pl4D96Pvtu2e0gmrZ5Y3F28rr4UJgERREj6g4R/wsERV2C1ryV8ilfiZ8RyOeFsKIa7QTW35v6yenB2i20jxw0RAypQPSstkDy/LTiqvY=&Key-Pair-Id=APKAIUO27P366FGALUMQ","21":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00L.LXXXXXXX.jpg?Expires=1449347936&Signature=an5cD8nss9GaWrtPinSn8rJOHmqfoO26QkXX15T5TJTGOVoXecWVaPnPwdZdooVKk41X/lW/V2J1QuqbWRpDAr33bE/sRhN7HsoaBO0MWSTILzDCNKjd/vP0BK8dRwnw10Hid9hF6taBkfGXd8/fzvH2WVdlsFuBvESybu852zE=&Key-Pair-Id=APKAIUO27P366FGALUMQ","9":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S009.LXXXXXXX.jpg?Expires=1449347936&Signature=bHu/G6gKoXnS9UqDYKZDo+x12W2T11BvLXnbbMNod99mQJjRe0STq7xzJD1+gfkvm3OTPNM2g/c36/FV5RF8AW9Y3VYisHWYRLzLkY85zPRba002SIasrm2WzUHogZaiJO29jcBkahdn8q99s6v48ihyJu+LXJZ9i8PEOg5yuoo=&Key-Pair-Id=APKAIUO27P366FGALUMQ","20":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00K.LXXXXXXX.jpg?Expires=1449347936&Signature=ZSFFEZ8+JD+fgKUzoTEtk8wA4w5Vqcyp0I7yYfNFi9icHnOWlYTVhWETzmtgB/htKRpuyYnLxIEvcQBwAOMEIE7EhkrIpMXStY7HEtK2oWZiBr19UN+IDJtzpeygvGEOrDcz1hoV0BqQB7w9DBTlv29zYp5whnJgBt/04Sei1UE=&Key-Pair-Id=APKAIUO27P366FGALUMQ","8":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S008.LXXXXXXX.jpg?Expires=1449347936&Signature=Rdgv7KpdHQycwejC8BJJsKM5lCGm3GCt4qG/ApF8Rlv4akHL4rkkiyBMeDsYpWgi7t9T3thXuLFMk9JvWcKlu1Utd1b787hb90vAvhNAt74EBuUJ9zE9Uc68z4qrP2+a8uB14Ty2w1MRvzL3VUZnUQEqaq5mpGEJRJKxxYOgar4=&Key-Pair-Id=APKAIUO27P366FGALUMQ","22":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00M.LXXXXXXX.jpg?Expires=1449347936&Signature=HiUs3q+0nh2D+vODHMa3VoC3MOzSG3PEF2ZY3I+eeY47m6qt+3oJxWDcDLaNjJ2AcE+DQjOpC0KP021L43hKAcLHSQiY8wsJI1P8KWFtDOpY4wugoApHndW+vySUN9l5R89e+oqoKyPE6lr9H/kl8DFNLb8wv3SxupnPNoVEbyg=&Key-Pair-Id=APKAIUO27P366FGALUMQ","1":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S001.LXXXXXXX.jpg?Expires=1449347936&Signature=W2srCcBTz/UmJUZ3giG/sUDobdNpQrMV21r6dvQyrXkSJ4UaSdnUJlwK5Q8NsytXp7MZLBs13MDXWy/cCZT7wn1K6rgdsROp1tgBXHiud2avW3en8zens5f3yiQmHLfvhWZwmR/KClHKJ6hlDjrxlGhOZTVk6wc1CqM18+OrAkI=&Key-Pair-Id=APKAIUO27P366FGALUMQ","24":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00O.LXXXXXXX.jpg?Expires=1449347936&Signature=XIrxCcLrN3NZ8QCigoEcquOHKdp4ejY605CI/EVDDOLqrB6yn7+ZmZcjmnVNvlv/3ApV28YavPoqFl17uarRJ4S9n0IwVJ0sBVX2WDEDJEiuk7Lm3PtC/SfcrvF+Xj1IQRzgG2GQeT5o5/CQU5eHT9xcYocP1GGigWVBW0MtYzs=&Key-Pair-Id=APKAIUO27P366FGALUMQ","23":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S00N.LXXXXXXX.jpg?Expires=1449347936&Signature=YBwubt9vTjOurrec24OAZOfwLqheqQkoyy9so8qP16QMpg4zDL2ypC2z4MEu30AXCY0IwL/tspSQE1LiwZF6Twe8KegDiYybaxUmRe4xzlvicu0S5DqS9QpQDy8/c7ujvX/bOmvmpRBj0GUVmlzuhzwGX4qVZpQUNnXXm3pQbuo=&Key-Pair-Id=APKAIUO27P366FGALUMQ","5":"https://d1b14unh5d6w7g.cloudfront.net/0818407271.01.S005.LXXXXXXX.jpg?Expires=1449347936&Signature=YdNPwD1BMB5NRpIZ02aZIaLgC2M8bm/IiuxCdHnaQxP3Df4dMSP/4WGMgR4tFGFfCPJ6puDEeGOcK7weRAidmmLNsxXI7J559IzeLJNO7mjQXUwHB7ktar/+YmW80nyNRKcUEfH41xjxzS/5bVtqJNLJU6VojoqDVJVra8w6zrw=&Key-Pair-Id=APKAIUO27P366FGALUMQ"}}
+		
+		const someInvalidPage = '155'
+		const someInvalidBookPages = {"error":{"text":{"key":"PAGE_NOT_AVAILABLE_TEXT"},"title":{"key":"PAGE_NOT_AVAILABLE_TITLE"},"reftag":"rdr_bar_view"}}
+
+		it ('returns valid book pages for a valid page', () => {
+			driver.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).returns({
+				bookPages: someBookPages
+			})
+			
+			return sitbClient.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).then((bookPages) => {
+				expect(bookPages).to.deep.equal(someBookPages)
+			}, (error) => {
+				assert.ok(false, `goToLitbPage returned ${JSON.stringify(error)}`)
+			})
+		})
+		
+		it ('returns empty book pages for an invalid page', () => {
+			driver.goToLitbPage({
+				asin: someAsin,
+				page: someInvalidPage
+			}).returns({
+				bookPages: someInvalidBookPages
+			})
+			
+			return sitbClient.goToLitbPage({
+				asin: someAsin,
+				page: someInvalidPage
+			}).then((bookPages) => {
+				expect(bookPages).to.deep.equal(someInvalidBookPages)
+			}, (error) => {
+				assert.ok(false, `goToLitbPage returned ${JSON.stringify(error)}`)
+			})
+		})
+		
+		it ('gracefully fails on timeout', () => {
+			driver.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).returns({
+				bookPages: someBookPages,
+				delay: 100
+			})
+			
+			const sitbClientWithTimeout = new AmazonSitbClient({
+				XMLHttpRequest,
+				endpoint,
+				timeout: 10
+			})
+			
+			return sitbClientWithTimeout.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).then((bookPages) => {
+				// Unexpected success
+				assert.ok(false, `goToLitbPage should have timed out, but returned ${JSON.stringify(bookPages)}`)
+			}, (error) => {
+				expect(error.code).to.equal('timeout')
+				expect(error.description).to.not.be.empty
+			})
+		})
+		
+		it ('gracefully fails when network is down', () => {
+			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
+				XMLHttpRequest,
+				endpoint: invalidEndpoint
+			})
+			
+			return sitbClientWithInvalidEndpoint.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).then((bookPages) => {
+				// Unexpected success
+				assert.ok(false, `Network should be down, but request returned ${JSON.stringify(bookPages)}`)
+			}, (error) => {
+				expect(error.code).to.equal('network_down')
+				expect(error.description).to.not.be.empty
+			})
+		})
+		
+		it ('gracefully fails on protocol error', () => {
+			driver.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).errors()
+			
+			return sitbClient.goToLitbPage({
+				asin: someAsin,
+				page: somePage
+			}).then((bookPages) => {
+				// Unexpected success
+				assert.ok(false, `Expected protocol error, but request returned ${JSON.stringify(bookPages)}`)
 			}, (error) => {
 				expect(error.code).to.equal('protocol')
 				expect(error.description).to.not.be.empty
