@@ -1,0 +1,47 @@
+{
+  "name": "amazon-sitb",
+  "version": "1.0.0",
+  "description": "JavaScript client for Amazon's SITB (search-inside-the-book) API",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel/register",
+    "prepublish": "npm test && grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dleshem/amazon-sitb.git"
+  },
+  "keywords": [
+    "amazon",
+    "sitb",
+    "search inside the book"
+  ],
+  "author": "Danny Leshem <dleshem@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dleshem/amazon-sitb/issues"
+  },
+  "homepage": "https://github.com/dleshem/amazon-sitb",
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babel-core": "^5.8.22",
+    "babel-loader": "^5.3.2",
+    "chai": "^2.2.0",
+    "grunt": "^0.4.5",
+    "grunt-webpack": "^1.0.11",
+    "lodash": "^3.9.3",
+    "mocha": "^2.2.1",
+    "webpack": "^1.12.0",
+    "webpack-dev-server": "^1.10.1",
+    "xhr2": "^0.1.3",
+	"query-string": "^3.0.0",
+	"lodash": "^3.10.1"
+  },
+  "dependencies": {},
+  "directories": {
+    "test": "test"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
