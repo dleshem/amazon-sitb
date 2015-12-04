@@ -72,4 +72,36 @@ export class AmazonSitbDriver {
 			}
 		}
 	}
+	
+	getSearchResults({asin, pageNumber, pageSize, query}) {
+		return {
+			returns: ({bookSearchResults, delay = 0}) => {
+				this._server.addRule({
+					resource: '/',
+					params: {
+						method: 'getSearchResults',
+						asin,
+						pageNumber,
+						pageSize,
+						query
+					},
+					delay: delay,
+					responseText: JSON.stringify(bookSearchResults)
+				})
+			},
+			errors: () => {
+				this._server.addRule({
+					resource: '/',
+					params: {
+						method: 'getSearchResults',
+						asin,
+						pageNumber,
+						pageSize,
+						query
+					},
+					responseText: '<html><head><title>Error 500</title></head></html>'
+				})
+			}
+		}
+	}
 }

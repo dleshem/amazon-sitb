@@ -28,13 +28,13 @@ export class AmazonSitbClient {
 		})
 	}
 	
-	getSearchResults({asin, firstResult, maxResults, query}) {
+	getSearchResults({asin, pageNumber, pageSize, query}) {
 		return this._fetchJson({
 			params: {
-				method: 'goToLitbPage',
+				method: 'getSearchResults',
 				asin,
-				pageNumber: firstResult,
-				pageSize: maxResults,
+				pageNumber,
+				pageSize,
 				query
 			}
 		})

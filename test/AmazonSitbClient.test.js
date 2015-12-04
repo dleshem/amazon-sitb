@@ -124,7 +124,7 @@ describe('AmazonSitbClient', () => {
 			})
 		})
 	})
-	
+
 	describe('goToLitbPage', () => {
 		const someAsin = '0818407271'
 		const somePage = '1'
@@ -226,6 +226,134 @@ describe('AmazonSitbClient', () => {
 			}).then((bookPages) => {
 				// Unexpected success
 				assert.ok(false, `Expected protocol error, but request returned ${JSON.stringify(bookPages)}`)
+			}, (error) => {
+				expect(error.code).to.equal('protocol')
+				expect(error.description).to.not.be.empty
+			})
+		})
+	})
+	
+	describe('getSearchResults', () => {
+		const someAsin = '0818407271'
+		const somePageNumber = '1'
+		const somePageSize = '5'
+		const someQuery = 'river'
+		const someBookSearchResults = {"error":{"text":{"args":{"LOGIN_RETURN_ARGS":"asin=0818407271&query=river"},"key":"PLEASE_SIGN_IN_TEXT"},"title":{"key":"PLEASE_SIGN_IN_TITLE"},"reftag":"rdr_bar_login"},"cause":"no customer ID","totalResults":87,"results":[[33,"Page 14","... Again Kathy calls without a lot of hesitation. A King or a Queen on the <b>river</b> would be nice. ...","gAACIrUUUogOKxQAAwthcIVREMDnEwmKICxCHug+ou9T9hGBlJzniQ=="],[39,"Page 20","... The <b>river</b> blanked out&mdash;24&mdash;and I doubled up into the 30k range.  Great fold, strange call, weird hand! ...","gAACIrUUUoi1oFi5FKQrnuGY/3wCh7M2rF+UBWpfwOuzy8qr3N4UlA=="],[41,"Page 22","... seem a bit odd with what is knowingly the best hand, but there are a couple of good reasons why. Upside: Avoid going broke on the hand if the board pairs on the <b>river</b> ...","gAACIrUUUojZpTejjU7xmInI6OAooqGmjkHkavavRtz/IXXYBlnrxw=="],[42,"Page 23","... 9% 42,220* Equity 44,350 41,727 41,727 *My opponent calls a 8,000 value bet on the <b>river</b>   So my average chip stack after the all-in move would be 41 ...","gAACIrUUUojfU5O6bXEXg/dVSL5cH4b5jJFClJOH9ib17t6l33UJUw=="],[43,"Page 24","... He calls, shows a set of nines, and we are down to the skill-card. The <b>river</b> is the:   A beautiful card ...","gAACIrUUUoht7cCiMK3bVAFZUu2FPHPNekmghT30h8UCbB1TXHxa2A=="]]}
+		
+		const someInvalidQuery = 'fkjsdhfjkdshfjkkdsfsdffsfsdfds'
+		const someInvalidBookSearchResults = {"totalResults":0}
+
+		it ('returns valid search results for a valid query', () => {
+			driver.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).returns({
+				bookSearchResults: someBookSearchResults
+			})
+			
+			return sitbClient.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).then((bookSearchResults) => {
+				expect(bookSearchResults).to.deep.equal(someBookSearchResults)
+			}, (error) => {
+				assert.ok(false, `getSearchResults returned ${JSON.stringify(error)}`)
+			})
+		})
+		
+		it ('returns empty search results for an invalid query', () => {
+			driver.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someInvalidQuery
+			}).returns({
+				bookSearchResults: someInvalidBookSearchResults
+			})
+			
+			return sitbClient.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someInvalidQuery
+			}).then((bookSearchResults) => {
+				expect(bookSearchResults).to.deep.equal(someInvalidBookSearchResults)
+			}, (error) => {
+				assert.ok(false, `getSearchResults returned ${JSON.stringify(error)}`)
+			})
+		})
+		
+		it ('gracefully fails on timeout', () => {
+			driver.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).returns({
+				bookSearchResults: someBookSearchResults,
+				delay: 100
+			})
+			
+			const sitbClientWithTimeout = new AmazonSitbClient({
+				XMLHttpRequest,
+				endpoint,
+				timeout: 10
+			})
+			
+			return sitbClientWithTimeout.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).then((bookSearchResults) => {
+				// Unexpected success
+				assert.ok(false, `getSearchResults should have timed out, but returned ${JSON.stringify(bookSearchResults)}`)
+			}, (error) => {
+				expect(error.code).to.equal('timeout')
+				expect(error.description).to.not.be.empty
+			})
+		})
+		
+		it ('gracefully fails when network is down', () => {
+			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
+				XMLHttpRequest,
+				endpoint: invalidEndpoint
+			})
+			
+			return sitbClientWithInvalidEndpoint.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).then((bookSearchResults) => {
+				// Unexpected success
+				assert.ok(false, `Network should be down, but request returned ${JSON.stringify(bookSearchResults)}`)
+			}, (error) => {
+				expect(error.code).to.equal('network_down')
+				expect(error.description).to.not.be.empty
+			})
+		})
+		
+		it ('gracefully fails on protocol error', () => {
+			driver.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).errors()
+			
+			return sitbClient.getSearchResults({
+				asin: someAsin,
+				pageNumber: somePageNumber,
+				pageSize: somePageSize,
+				query: someQuery
+			}).then((bookSearchResults) => {
+				// Unexpected success
+				assert.ok(false, `Expected protocol error, but request returned ${JSON.stringify(bookSearchResults)}`)
 			}, (error) => {
 				expect(error.code).to.equal('protocol')
 				expect(error.description).to.not.be.empty
