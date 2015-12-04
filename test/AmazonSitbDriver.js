@@ -20,14 +20,16 @@ export class AmazonSitbDriver {
 	}
 	
 	getBookData({asin}) {
+		const params = {
+			method: 'getBookData',
+			asin
+		}
+		
 		return {
 			returns: ({bookData, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'getBookData',
-						asin
-					},
+					params,
 					delay: delay,
 					responseText: JSON.stringify(bookData)
 				})
@@ -35,10 +37,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'getBookData',
-						asin
-					},
+					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
 			}
@@ -46,15 +45,17 @@ export class AmazonSitbDriver {
 	}
 	
 	goToLitbPage({asin, page}) {
+		const params = {
+			method: 'goToLitbPage',
+			asin,
+			page
+		}
+		
 		return {
 			returns: ({bookPages, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'goToLitbPage',
-						asin,
-						page
-					},
+					params,
 					delay: delay,
 					responseText: JSON.stringify(bookPages)
 				})
@@ -62,11 +63,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'goToLitbPage',
-						asin,
-						page
-					},
+					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
 			}
@@ -74,31 +71,27 @@ export class AmazonSitbDriver {
 	}
 	
 	getSearchResults({asin, pageNumber, pageSize, query}) {
+		const params = {
+			method: 'getSearchResults',
+			asin,
+			pageNumber,
+			pageSize,
+			query
+		}
+		
 		return {
 			returns: ({bookSearchResults, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'getSearchResults',
-						asin,
-						pageNumber,
-						pageSize,
-						query
-					},
-					delay: delay,
+					params,
+					delay,
 					responseText: JSON.stringify(bookSearchResults)
 				})
 			},
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
-					params: {
-						method: 'getSearchResults',
-						asin,
-						pageNumber,
-						pageSize,
-						query
-					},
+					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
 			}
