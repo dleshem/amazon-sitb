@@ -97,4 +97,36 @@ export class AmazonSitbDriver {
 			}
 		}
 	}
+	
+	goToPage({asin, page, token, authCookie}) {
+		const params = {
+			method: 'goToPage',
+			asin,
+			page,
+			token
+		}
+		const cookies = {
+			'x-main': authCookie
+		}
+		
+		return {
+			returns: ({bookPages, delay = 0}) => {
+				this._server.addRule({
+					resource: '/',
+					params,
+					cookies,
+					delay: delay,
+					responseText: JSON.stringify(bookPages)
+				})
+			},
+			errors: () => {
+				this._server.addRule({
+					resource: '/',
+					params,
+					cookies,
+					responseText: '<html><head><title>Error 500</title></head></html>'
+				})
+			}
+		}
+	}
 }

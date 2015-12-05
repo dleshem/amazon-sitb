@@ -1,9 +1,10 @@
 'use strict'
 
 import querystring from 'query-string'
+import _ from 'lodash'
 
 export class AmazonSitbClient {
-	constructor({XMLHttpRequest, endpoint = 'https://www.amazon.com/gp/search-inside/service-data', timeout = 0, authCookie}) {
+	constructor({XMLHttpRequest, endpoint = 'https://www.amazon.com/gp/search-inside/service-data', timeout = 0}) {
 		this._XMLHttpRequest = XMLHttpRequest
 		this._endpoint = endpoint
 		this._timeout = timeout
@@ -40,29 +41,36 @@ export class AmazonSitbClient {
 		})
 	}
 	
-	goToSitbPage({asin, page, token}) {
+	/*
+	goToSitbPage({asin, page, token, authCookie}) {
 		return this._fetchJson({
 			params: {
 				method: 'goToSitbPage',
 				asin,
 				page,
 				token
+			},
+			cookies: {
+				'x-main': authCookie
 			}
 		})
-	}
+	}*/
 	
-	goToPage({asin, page, token}) {
+	goToPage({asin, page, token, authCookie}) {
 		return this._fetchJson({
 			params: {
 				method: 'goToPage',
 				asin,
 				page,
 				token
+			},
+			cookies: {
+				'x-main': authCookie
 			}
 		})
 	}
 	
-	_fetchJson({params, authCookie}) {
+	_fetchJson({params, cookies}) {
 		return new Promise((resolve, reject) => {
 			const xhr = new this._XMLHttpRequest()
 			xhr.ontimeout = () => {
@@ -97,9 +105,14 @@ export class AmazonSitbClient {
 			//  > To discuss automated access to Amazon data please contact api-services-support@amazon.com.
 			xhr.setRequestHeader('Accept', '*/*')
 			
-			if (authCookie) {
-				xhr.setRequestHeader('Cookie', `x-main=${authCookie}`)
+			const cookieValue = _.map(cookies, (value, key) => {
+				return `${key}=${value}`
+			}).join('; ')
+			if (cookieValue) {
+				//xhr.setRequestHeader('Cookie', cookieValue)
+				xhr._headers['Cookie'] = cookieValue
 			}
+			
 			xhr.send()
 		})
 	}
