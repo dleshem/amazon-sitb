@@ -109,6 +109,8 @@ export class AmazonSitbClient {
 				return `${key}=${value}`
 			}).join('; ')
 			if (cookieValue) {
+				// HACK! xhr2 refuses to set the 'Cookie' header, so we add it directly
+				
 				//xhr.setRequestHeader('Cookie', cookieValue)
 				xhr._headers['Cookie'] = cookieValue
 			}
