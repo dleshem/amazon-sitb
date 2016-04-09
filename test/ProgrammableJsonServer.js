@@ -23,23 +23,24 @@ export class ProgrammableJsonServer {
 		this._rules = []
 	}
 	
-	addRule({resource, params = {}, cookies = {}, delay = 0, responseText}) {
-		this._rules.push({resource, params, cookies, delay, responseText})
+	addRule({resource, params = {}, headers = {}, cookies = {}, delay = 0, responseText}) {
+		this._rules.push({resource, params, headers, cookies, delay, responseText})
 	}
 	
 	_handler(req, res) {
+		const headers = req.headers
 		const query = querystring.extract(req.url)
 		const resource = (query.length > 0) ? req.url.substr(0, req.url.length - query.length - 1) : req.url
 		const params = querystring.parse(query)
 		
-		const cookieValue = req.headers['cookie'] || ''
+		const cookieValue = headers['cookie'] || ''
 		const cookieValues = cookieValue.split('; ')
 		const cookies = _(cookieValues).map((value) => {
 			return value.split('=')
-		}).zipObject().value()
+		}).fromPairs().value()
 		
 		const rule = _.find(this._rules, (rule) => {
-			return (rule.resource === resource) && _.isEqual(rule.params, params) && _.matches(rule.cookies)(cookies)
+			return (rule.resource === resource) && _.isEqual(rule.params, params) && _.matches(rule.cookies)(cookies) && _.matches(rule.headers)(headers)
 		})
 		
 		if (rule) {

@@ -2,6 +2,12 @@
 
 import {ProgrammableJsonServer} from './ProgrammableJsonServer'
 
+// Not setting the 'Accept-Encoding' header to support gzip results in HTTP status 500
+//  > To discuss automated access to Amazon data please contact api-services-support@amazon.com.
+const headers = {
+	'accept-encoding': 'gzip'
+}
+
 export class AmazonSitbDriver {
 	constructor({port}) {
 		this._server = new ProgrammableJsonServer({port})
@@ -29,6 +35,7 @@ export class AmazonSitbDriver {
 			returns: ({bookData, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					delay: delay,
 					responseText: JSON.stringify(bookData)
@@ -37,6 +44,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
@@ -55,6 +63,7 @@ export class AmazonSitbDriver {
 			returns: ({bookPages, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					delay: delay,
 					responseText: JSON.stringify(bookPages)
@@ -63,6 +72,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
@@ -83,6 +93,7 @@ export class AmazonSitbDriver {
 			returns: ({bookSearchResults, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					delay,
 					responseText: JSON.stringify(bookSearchResults)
@@ -91,6 +102,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
 				})
@@ -113,6 +125,7 @@ export class AmazonSitbDriver {
 			returns: ({bookPages, delay = 0}) => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					cookies,
 					delay: delay,
@@ -122,6 +135,7 @@ export class AmazonSitbDriver {
 			errors: () => {
 				this._server.addRule({
 					resource: '/',
+					headers,
 					params,
 					cookies,
 					responseText: '<html><head><title>Error 500</title></head></html>'

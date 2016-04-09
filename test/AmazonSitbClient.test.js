@@ -3,7 +3,6 @@
 import {AmazonSitbClient} from '../src/AmazonSitbClient'
 import {AmazonSitbDriver} from './AmazonSitbDriver'
 import {expect, assert} from 'chai'
-import {XMLHttpRequest} from 'xhr2'
 
 describe('AmazonSitbClient', () => {
 	const sitbServicePort = 10000
@@ -13,7 +12,7 @@ describe('AmazonSitbClient', () => {
 	const endpoint = `http://localhost:${sitbServicePort}/`
 	const invalidEndpoint = 'http://thisisanonexistentdomain.thisdoesntexist/'
 	
-	const sitbClient = new AmazonSitbClient({XMLHttpRequest, endpoint})
+	const sitbClient = new AmazonSitbClient({endpoint})
 
 	before(() => {
 		driver.start()
@@ -75,7 +74,6 @@ describe('AmazonSitbClient', () => {
 			})
 			
 			const sitbClientWithTimeout = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint,
 				timeout: 10
 			})
@@ -93,7 +91,6 @@ describe('AmazonSitbClient', () => {
 		
 		it ('gracefully fails when network is down', () => {
 			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint: invalidEndpoint
 			})
 			
@@ -179,7 +176,6 @@ describe('AmazonSitbClient', () => {
 			})
 			
 			const sitbClientWithTimeout = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint,
 				timeout: 10
 			})
@@ -198,7 +194,6 @@ describe('AmazonSitbClient', () => {
 		
 		it ('gracefully fails when network is down', () => {
 			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint: invalidEndpoint
 			})
 			
@@ -299,7 +294,6 @@ describe('AmazonSitbClient', () => {
 			})
 			
 			const sitbClientWithTimeout = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint,
 				timeout: 10
 			})
@@ -320,7 +314,6 @@ describe('AmazonSitbClient', () => {
 		
 		it ('gracefully fails when network is down', () => {
 			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint: invalidEndpoint
 			})
 			
@@ -427,7 +420,6 @@ describe('AmazonSitbClient', () => {
 			})
 			
 			const sitbClientWithTimeout = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint,
 				timeout: 10
 			})
@@ -448,7 +440,6 @@ describe('AmazonSitbClient', () => {
 		
 		it ('gracefully fails when network is down', () => {
 			const sitbClientWithInvalidEndpoint = new AmazonSitbClient({
-				XMLHttpRequest,
 				endpoint: invalidEndpoint
 			})
 			

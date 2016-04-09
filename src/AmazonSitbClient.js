@@ -2,10 +2,10 @@
 
 import querystring from 'query-string'
 import _ from 'lodash'
+import request from 'request'
 
 export class AmazonSitbClient {
-	constructor({XMLHttpRequest, endpoint = 'https://www.amazon.com/gp/search-inside/service-data', timeout = 0}) {
-		this._XMLHttpRequest = XMLHttpRequest
+	constructor({endpoint = 'https://www.amazon.com/gp/search-inside/service-data', timeout = 0}) {
 		this._endpoint = endpoint
 		this._timeout = timeout
 	}
@@ -72,50 +72,41 @@ export class AmazonSitbClient {
 	
 	_fetchJson({params, cookies}) {
 		return new Promise((resolve, reject) => {
-			const xhr = new this._XMLHttpRequest()
-			xhr.ontimeout = () => {
-				reject({
-					code: 'timeout',
-					description: 'request timed out'
-				})
-			}
-			xhr.onerror = () => {
-				reject({
-					code: 'network_down',
-					description: 'network is down'
-				})
-			}
-			xhr.onload = () => {
-				try {
-					const response = JSON.parse(xhr.response)
-					resolve(response)
-				} catch (e) {
-					reject({
-						code: 'protocol',
-						description: 'unexpected response format'
-					})
-				}
-			}
-			
 			const url = `${this._endpoint}${params ? '?' + querystring.stringify(params) : ''}`
-			xhr.open('GET', url, true)
-			xhr.timeout = this._timeout
 			
-			// Not setting the 'Accept' header results in HTTP status 500
+			const jar = request.jar()
+			_.each(cookies, (value, key) => {
+				const cookie = request.cookie(`${key}=${value}`)
+				jar.setCookie(cookie, url)
+			})
+			
+			// Not setting the 'Accept-Encoding' header to support gzip results in HTTP status 500
 			//  > To discuss automated access to Amazon data please contact api-services-support@amazon.com.
-			xhr.setRequestHeader('Accept', '*/*')
-			
-			const cookieValue = _.map(cookies, (value, key) => {
-				return `${key}=${value}`
-			}).join('; ')
-			if (cookieValue) {
-				// HACK! xhr2 refuses to set the 'Cookie' header, so we add it directly
-				
-				//xhr.setRequestHeader('Cookie', cookieValue)
-				xhr._headers['Cookie'] = cookieValue
-			}
-			
-			xhr.send()
+			request.get(url, {timeout: this._timeout, jar, gzip: true}, (error, response, body) => {
+				if (error) {
+					if (error.code === 'ETIMEDOUT') {
+						reject({
+							code: 'timeout',
+							description: 'request timed out'
+						})
+					} else {
+						reject({
+							code: 'network_down',
+							description: 'network is down'
+						})
+					}
+				} else {
+					try {
+						const response = JSON.parse(body)
+						resolve(response)
+					} catch (e) {
+						reject({
+							code: 'protocol',
+							description: 'unexpected response format'
+						})
+					}
+				}
+			})
 		})
 	}
 }
