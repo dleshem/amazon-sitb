@@ -1,5 +1,3 @@
-'use strict'
-
 import http from 'http'
 import querystring from 'query-string'
 import _ from 'lodash'
@@ -35,9 +33,10 @@ export class ProgrammableJsonServer {
 		
 		const cookieValue = headers['cookie'] || ''
 		const cookieValues = cookieValue.split('; ')
-		const cookies = _(cookieValues).map((value) => {
-			return value.split('=')
-		}).fromPairs().value()
+		const cookies = _(cookieValues)
+			.map(value => value.split('='))
+			.fromPairs()
+			.value()
 		
 		const rule = _.find(this._rules, (rule) => {
 			return (rule.resource === resource) && _.isEqual(rule.params, params) && _.matches(rule.cookies)(cookies) && _.matches(rule.headers)(headers)
