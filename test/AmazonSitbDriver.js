@@ -1,11 +1,9 @@
-'use strict'
-
 import {ProgrammableJsonServer} from './ProgrammableJsonServer'
 
 // Not setting the 'Accept-Encoding' header to support gzip results in HTTP status 500
 //  > To discuss automated access to Amazon data please contact api-services-support@amazon.com.
 const headers = {
-	'accept-encoding': 'gzip'
+	'accept-encoding': 'gzip, deflate'
 }
 
 export class AmazonSitbDriver {
@@ -110,7 +108,7 @@ export class AmazonSitbDriver {
 		}
 	}
 	
-	goToPage({asin, page, token, authCookie}) {
+	goToPage({asin, page, token, auth}) {
 		const params = {
 			method: 'goToPage',
 			asin,
@@ -118,7 +116,8 @@ export class AmazonSitbDriver {
 			token
 		}
 		const cookies = {
-			'x-main': authCookie
+			'x-main': auth.xMain,
+			'ubid-main': auth.ubidMain
 		}
 		
 		return {
