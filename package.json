@@ -1,6 +1,6 @@
 {
   "name": "amazon-sitb",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "JavaScript client for Amazon's SITB (search-inside-the-book) API",
   "main": "dist/index.js",
   "scripts": {
