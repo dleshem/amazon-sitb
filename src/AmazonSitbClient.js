@@ -3,35 +3,43 @@ import _ from 'lodash'
 import request from 'request'
 
 export class AmazonSitbClient {
-	constructor({endpoint = 'https://www.amazon.com/gp/search-inside/service-data', timeout = 0} = {}) {
+	constructor({endpoint = 'https://read.amazon.com/', timeout = 0} = {}) {
 		this._endpoint = endpoint
 		this._timeout = timeout
 	}
 	
 	async getBookData({asin}) {
 		return this._fetchJson({
+			resource: 'api/litb/book-data',
 			params: {
-				method: 'getBookData',
 				asin
 			}
 		})
 	}
 	
-	async goToLitbPage({asin, page}) {
+	async goToPage({asin, buyingAsin = null, page, token = null, auth = null}) {
+		const cookies = token ? {
+			'x-main': auth.xMain,
+			'ubid-main': auth.ubidMain
+		} : null;
 		return this._fetchJson({
+			resource: 'api/litb/go-to-page',
 			params: {
-				method: 'goToLitbPage',
 				asin,
-				page
-			}
+				buyingAsin,
+				page,
+				token
+			},
+			cookies
 		})
 	}
 	
-	async getSearchResults({asin, pageNumber, pageSize, query}) {
+	async getSearchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
 		return this._fetchJson({
+			resource: 'api/litb/search-results',
 			params: {
-				method: 'getSearchResults',
 				asin,
+				buyingAsin,
 				pageNumber,
 				pageSize,
 				query
@@ -39,40 +47,9 @@ export class AmazonSitbClient {
 		})
 	}
 	
-	/*
-	async goToSitbPage({asin, page, token, auth}) {
-		return this._fetchJson({
-			params: {
-				method: 'goToSitbPage',
-				asin,
-				page,
-				token
-			},
-			cookies: {
-				'x-main': auth.xMain,
-				'ubid-main': auth.ubidMain
-			}
-		})
-	}*/
-	
-	async goToPage({asin, page, token, auth}) {
-		return this._fetchJson({
-			params: {
-				method: 'goToPage',
-				asin,
-				page,
-				token
-			},
-			cookies: {
-				'x-main': auth.xMain,
-				'ubid-main': auth.ubidMain
-			}
-		})
-	}
-	
-	async _fetchJson({params, cookies}) {
+	async _fetchJson({resource = '/', params, cookies}) {
 		return new Promise((resolve, reject) => {
-			const url = `${this._endpoint}${params ? '?' + querystring.stringify(params) : ''}`
+			const url = `${this._endpoint}${resource}${params ? '?' + querystring.stringify(params) : ''}`
 			
 			const jar = request.jar()
 			_.each(cookies, (value, key) => {

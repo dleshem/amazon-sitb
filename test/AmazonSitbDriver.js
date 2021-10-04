@@ -24,15 +24,13 @@ export class AmazonSitbDriver {
 	}
 	
 	getBookData({asin}) {
-		const params = {
-			method: 'getBookData',
-			asin
-		}
-		
+		const resource = '/api/litb/book-data';
+		const params = { asin };
+
 		return {
 			returns: ({bookData, delay = 0}) => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					delay: delay,
@@ -41,7 +39,7 @@ export class AmazonSitbDriver {
 			},
 			errors: () => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
@@ -50,47 +48,20 @@ export class AmazonSitbDriver {
 		}
 	}
 	
-	goToLitbPage({asin, page}) {
+	getSearchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
+		const resource = '/api/litb/search-results';
 		const params = {
-			method: 'goToLitbPage',
 			asin,
-			page
-		}
-		
-		return {
-			returns: ({bookPages, delay = 0}) => {
-				this._server.addRule({
-					resource: '/',
-					headers,
-					params,
-					delay: delay,
-					responseText: JSON.stringify(bookPages)
-				})
-			},
-			errors: () => {
-				this._server.addRule({
-					resource: '/',
-					headers,
-					params,
-					responseText: '<html><head><title>Error 500</title></head></html>'
-				})
-			}
-		}
-	}
-	
-	getSearchResults({asin, pageNumber, pageSize, query}) {
-		const params = {
-			method: 'getSearchResults',
-			asin,
+			buyingAsin,
 			pageNumber,
 			pageSize,
 			query
-		}
+		};
 		
 		return {
 			returns: ({bookSearchResults, delay = 0}) => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					delay,
@@ -99,7 +70,7 @@ export class AmazonSitbDriver {
 			},
 			errors: () => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					responseText: '<html><head><title>Error 500</title></head></html>'
@@ -108,22 +79,23 @@ export class AmazonSitbDriver {
 		}
 	}
 	
-	goToPage({asin, page, token, auth}) {
+	goToPage({asin, buyingAsin = null, page, token = null, auth}) {
+		const resource = '/api/litb/go-to-page';
 		const params = {
-			method: 'goToPage',
 			asin,
+			buyingAsin,
 			page,
 			token
 		}
-		const cookies = {
+		const cookies = auth ? {
 			'x-main': auth.xMain,
 			'ubid-main': auth.ubidMain
-		}
+		} : {};
 		
 		return {
 			returns: ({bookPages, delay = 0}) => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					cookies,
@@ -133,7 +105,7 @@ export class AmazonSitbDriver {
 			},
 			errors: () => {
 				this._server.addRule({
-					resource: '/',
+					resource,
 					headers,
 					params,
 					cookies,
