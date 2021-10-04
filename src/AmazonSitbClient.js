@@ -8,7 +8,7 @@ export class AmazonSitbClient {
 		this._timeout = timeout
 	}
 	
-	async getBookData({asin}) {
+	async bookData({asin}) {
 		return this._fetchJson({
 			resource: 'api/litb/book-data',
 			params: {
@@ -34,7 +34,7 @@ export class AmazonSitbClient {
 		})
 	}
 	
-	async getSearchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
+	async searchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
 		return this._fetchJson({
 			resource: 'api/litb/search-results',
 			params: {

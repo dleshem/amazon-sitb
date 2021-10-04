@@ -23,7 +23,7 @@ export class AmazonSitbDriver {
 		this._server.reset()
 	}
 	
-	getBookData({asin}) {
+	bookData({asin}) {
 		const resource = '/api/litb/book-data';
 		const params = { asin };
 
@@ -48,7 +48,7 @@ export class AmazonSitbDriver {
 		}
 	}
 	
-	getSearchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
+	searchResults({asin, buyingAsin = null, pageNumber, pageSize, query}) {
 		const resource = '/api/litb/search-results';
 		const params = {
 			asin,
